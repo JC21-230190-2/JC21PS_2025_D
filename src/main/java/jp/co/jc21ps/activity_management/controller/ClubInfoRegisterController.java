@@ -85,30 +85,39 @@ public class ClubInfoRegisterController {
         String leaderClubId = sessionDto.getClubId();
 
         // バリデーション
-        /*
-         * TODO ➊ バリデーションエラーの際の処理を完成させる。
-         */
+        if (bindingResult.hasErrors()) {//エラーチェック
+            mav.addObject("clubInfoRegisterSaveForm", paramForm);
+            mav.addObject("leaderClubId", leaderClubId);
+            mav.setViewName("clubInfoRegister");
+            return mav;
+        }//エラー時は clubInfoRegister 画面に戻し、フォームオブジェクトと leaderClubId を設定
 
         // セッションが切れた場合、エラー画面に遷移
         if (leaderClubId.isEmpty()) {
             mav.setViewName("error");
             return mav;
         }
-
+        //paramForm から clubInfoRegisterDto に以下を設定
+        //leaderClubId: セッションから取得した値
+        //clubDescription: フォームから取得した値
         try {
             ClubInfoRegisterDto clubInfoRegisterDto = new ClubInfoRegisterDto();
-            /*
-             * TODO ➋ updateClubInfoメソッドの引数に使用しているclubInfoRegisterDtoに、パラメータを設定する。
-             */
+            clubInfoRegisterDto.setLeaderClubId(leaderClubId);
+            clubInfoRegisterDto.setClubDescription(paramForm.getClubDescription());
 
             String result = clubInfoRegisterService.updateClubInfo(clubInfoRegisterDto);
 
             // messages.propertiesからメッセージを取得
             String resultMessage = messageSource.getMessage(result, null, Locale.getDefault());
 
-            /*
-             * TODO ➌ resultの取得結果に応じて、遷移先を変更する。
-             */
+            //更新成功時は clubInfoRegister 画面に戻す
+            //messages.properties から取得した成功メッセージを updateClubInfo として追加
+            //フォームオブジェクトと leaderClubId も追加
+            // 更新成功時、部署情報登録画面に遷移し、成功メッセージを表示
+            mav.addObject("updateClubInfo", resultMessage);
+            mav.addObject("clubInfoRegisterSaveForm", paramForm);
+            mav.addObject("leaderClubId", leaderClubId);
+            mav.setViewName("clubInfoRegister");
 
         } catch (Exception e) {
             // DB接続失敗した場合、エラー画面に遷移
