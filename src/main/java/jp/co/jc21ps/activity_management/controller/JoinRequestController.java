@@ -76,9 +76,16 @@ public class JoinRequestController {
             formList.add(f);
         }
 
-        mav.addObject("joinRequestList", formList);
+        // 申請する部署がない場合のメッセージ
+        String notRequestClubMessage = null;
+        if (formList.isEmpty()) {
+            notRequestClubMessage = messageSource.getMessage("notRequestClubMessage", null, Locale.getDefault());
+        }
+
+        mav.addObject("joinRequestSaveForm", formList);
+        mav.addObject("joinRequestCompleteMessage", joinOkMessage);
+        mav.addObject("notRequestClubMessage", notRequestClubMessage);
         mav.addObject("leaderClubId", leaderClubId);
-        mav.addObject("message", joinOkMessage);
 
         mav.setViewName("joinRequest");
         return mav;
@@ -137,17 +144,13 @@ public class JoinRequestController {
         if (result) {
             // 成功メッセージ
             String successMessage = messageSource.getMessage(
-                    "joinRequest.insert.success", null, Locale.getDefault());
+                    "joinRequestCompleteMessage", null, Locale.getDefault());
             redirectAttributes.addFlashAttribute("joinOkMessage", successMessage);
 
             mav.setViewName("redirect:/joinRequest");
         } else {
             // 失敗メッセージ
-            String errorMessage = messageSource.getMessage(
-                    "joinRequest.insert.error", null, Locale.getDefault());
-
-            mav.addObject("message", errorMessage);
-            mav.setViewName("joinRequestConfirm");
+            mav.setViewName("error");
         }
 
         return mav;

@@ -22,27 +22,46 @@ public class JoinApprovalRepository {
          * TODO ➊ 初期表示情報を取得するSQLを完成させる。
          */
         String sql = """
-
+                SELECT 
+                    request.club_id,
+                    request.user_id,
+                    user.user_name,
+                    club.club_name
+                FROM 
+                    trn_join_request request
+                INNER JOIN
+                    mst_user user ON request.user_id = user.user_id
+                INNER JOIN
+                    mst_club club ON request.club_id = club.club_id
+                WHERE
+                    request.club_id = ?
                 """;
 
-        List<Map<String, Object>> joinApprovalList = jdbcTemplate.queryForList(sql, paramEntity.getClubId());
         List<JoinApprovalEntity> responseEntity = new ArrayList<>();
+        
+        try {
+            List<Map<String, Object>> joinApprovalList = jdbcTemplate.queryForList(sql, paramEntity.getClubId());
 
-        // リストが空だった場合
-        if (joinApprovalList.isEmpty()) {
+            // リストが空だった場合
+            if (joinApprovalList == null || joinApprovalList.isEmpty()) {
+                return responseEntity;
+            }
+
+            for (Map<String, Object> joinApprovalLoop : joinApprovalList) {
+
+                // entityに値をセット
+                JoinApprovalEntity viewList = new JoinApprovalEntity();
+                viewList.setClubId((String) joinApprovalLoop.get("club_id"));
+                viewList.setUserId((String) joinApprovalLoop.get("user_id"));
+                viewList.setUserName((String) joinApprovalLoop.get("user_name"));
+                viewList.setClubName((String) joinApprovalLoop.get("club_name"));
+                viewList.setLeaderFlg(false); // デフォルト値としてfalseを設定
+                responseEntity.add(viewList);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             return responseEntity;
-        }
-
-        for (Map<String, Object> joinApprovalLoop : joinApprovalList) {
-
-            // entityに値をセット
-            JoinApprovalEntity viewList = new JoinApprovalEntity();
-            viewList.setClubId((String) joinApprovalLoop.get("club_Id"));
-            viewList.setUserId((String) joinApprovalLoop.get("user_id"));
-            viewList.setUserName((String) joinApprovalLoop.get("user_name"));
-            viewList.setClubName((String) joinApprovalLoop.get("club_name"));
-            responseEntity.add(viewList);
-
         }
 
         return responseEntity;
@@ -59,16 +78,21 @@ public class JoinApprovalRepository {
                 club_id = ?
                            """;
 
-        List<Map<String, Object>> clubNameList = jdbcTemplate.queryForList(sql, paramEntity.getClubId());
+        try {
+            List<Map<String, Object>> clubNameList = jdbcTemplate.queryForList(sql, paramEntity.getClubId());
 
-        if (clubNameList.isEmpty()) {
+            if (clubNameList == null || clubNameList.isEmpty()) {
+                return "";
+            }
+
+            Map<String, Object> responseEntity = clubNameList.get(0);
+            String clubName = (String) responseEntity.get("club_name");
+            
+            return (clubName != null) ? clubName : "";
+        } catch (Exception e) {
+            e.printStackTrace();
             return "";
         }
-
-        Map<String, Object> responseEntity = clubNameList.get(0);
-
-        return ((String) responseEntity.get("club_name"));
-
     }
 
     // insert（承認）
@@ -77,7 +101,8 @@ public class JoinApprovalRepository {
          * TODO ➋ ユーザーを承認するSQL文を完成させる。
          */
         String sqlInsert = """
-
+                INSERT INTO trn_club_member (club_id, user_id, leader_flg)
+                VALUES (?, ?, ?)
                 """;
 
         // entityから値をゲット
@@ -96,14 +121,14 @@ public class JoinApprovalRepository {
          * TODO ➌ ユーザーを否認するSQL文を完成させる。
          */
         String sqlDelete = """
-
+                DELETE FROM trn_join_request
+                WHERE user_id = ? AND club_id = ?
                 """;
 
         // entityから値をゲット
         Object[] paramList = {
-                paramEntity.getClubId(),
                 paramEntity.getUserId(),
-                paramEntity.isLeaderFlg()
+                paramEntity.getClubId()
         };
 
         jdbcTemplate.update(sqlDelete, paramList);
