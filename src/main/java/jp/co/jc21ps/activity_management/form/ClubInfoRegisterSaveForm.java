@@ -11,11 +11,11 @@ public class ClubInfoRegisterSaveForm {
     private String clubName;
 
     // 部署説明
-    // TODO clubDescriptionに対し、バリデーションを付与する。
+    //clubDescriptionに対し、バリデーションを付与する。
     /*
      * 1.文字数制御(ヒント: @○○(max = 制御したい文字数, message = "{Size}"))
      */
-
+    @Size(max = 200, message = "{Size}")
     private String clubDescription;
 
     public ClubInfoRegisterSaveForm() {
