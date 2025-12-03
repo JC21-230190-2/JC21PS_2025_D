@@ -68,22 +68,29 @@ public class JoinRequestController {
         List<JoinRequestDto> dtoList = joinRequestService.findRequest(dto);
 
         List<JoinRequestForm> formList = new ArrayList<>();
-        for (JoinRequestDto data : dtoList) {
-            JoinRequestForm f = new JoinRequestForm();
-            f.setClubId(data.getClubId());
-            f.setClubName(data.getClubName());
-            f.setClubDescription(data.getClubDescription());
-            formList.add(f);
+        if (dtoList != null) {
+            for (JoinRequestDto data : dtoList) {
+                JoinRequestForm f = new JoinRequestForm();
+                f.setClubId(data.getClubId());
+                f.setClubName(data.getClubName());
+                f.setClubDescription(data.getClubDescription());
+                formList.add(f);
+            }
         }
 
         // 申請する部署がない場合のメッセージ
         String notRequestClubMessage = null;
-        if (formList.isEmpty()) {
-            notRequestClubMessage = messageSource.getMessage("notRequestClubMessage", null, Locale.getDefault());
+        if (formList == null || formList.isEmpty()) {
+            try {
+                notRequestClubMessage = messageSource.getMessage("notRequestClubMessage", null, Locale.getDefault());
+            } catch (Exception e) {
+                // メッセージ取得に失敗した場合、デフォルトメッセージを設定
+                notRequestClubMessage = "申請する部署がありません。";
+            }
         }
 
         mav.addObject("joinRequestSaveForm", formList);
-        mav.addObject("joinRequestCompleteMessage", joinOkMessage);
+        mav.addObject("joinRequestCompleteMessage", joinOkMessage != null ? joinOkMessage : "");
         mav.addObject("notRequestClubMessage", notRequestClubMessage);
         mav.addObject("leaderClubId", leaderClubId);
 

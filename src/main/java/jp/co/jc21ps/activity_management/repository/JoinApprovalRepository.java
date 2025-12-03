@@ -21,21 +21,21 @@ public class JoinApprovalRepository {
         /*
          * TODO ➊ 初期表示情報を取得するSQLを完成させる。
          */
-        String sql = """
-                SELECT 
-                    request.club_id,
-                    request.user_id,
-                    user.user_name,
-                    club.club_name
-                FROM 
-                    trn_join_request request
-                INNER JOIN
-                    mst_user user ON request.user_id = user.user_id
-                INNER JOIN
-                    mst_club club ON request.club_id = club.club_id
+        String sql ="""
+                SELECT
+                    r.club_id,
+                    r.user_id,
+                    u.user_name,
+                    c.club_name
+                FROM
+                    trn_join_request r
+                INNER JOIN mst_user u ON r.user_id = u.user_id
+                INNER JOIN mst_club c ON r.club_id = c.club_id
                 WHERE
-                    request.club_id = ?
-                """;
+                    r.club_id = ?
+                ORDER BY r.user_id
+                """,
+ 
 
         List<JoinApprovalEntity> responseEntity = new ArrayList<>();
         
@@ -101,9 +101,14 @@ public class JoinApprovalRepository {
          * TODO ➋ ユーザーを承認するSQL文を完成させる。
          */
         String sqlInsert = """
-                INSERT INTO trn_club_member (club_id, user_id, leader_flg)
+                INSERT INTO trn_club_member (
+                    club_id,
+                    user_id,
+                    leader_flg
+                )
                 VALUES (?, ?, ?)
-                """;
+                """,
+ 
 
         // entityから値をゲット
         Object[] paramList = {
@@ -122,8 +127,10 @@ public class JoinApprovalRepository {
          */
         String sqlDelete = """
                 DELETE FROM trn_join_request
-                WHERE user_id = ? AND club_id = ?
-                """;
+                WHERE club_id = ?
+                AND user_id = ?
+                AND leader_flg = ?
+                """,
 
         // entityから値をゲット
         Object[] paramList = {

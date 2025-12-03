@@ -17,15 +17,15 @@
       </div>
       <div class="title">部員登録申請</div>
       <div class="frame">
-        <div class="joinOk" th:if="${joinRequestCompleteMessage != null}"
-          style="color: red; font-size: 20px; font-weight: 600;">
+        <div class="joinOk" th:if="${joinRequestCompleteMessage != null and joinRequestCompleteMessage != ''}"
+          style="color: red; font-size: 20px; font-weight: 600; padding: 20px;">
           <p th:text="${joinRequestCompleteMessage}"></p>
         </div>
-        <div class="joinNot" th:if="${notRequestClubMessage != null}"
-          style="color: red; font-size: 20px; font-weight: 600; padding: 20px;">
-          <p th:text="${notRequestClubMessage}"></p>
+        <div class="joinNot" th:if="${notRequestClubMessage != null and notRequestClubMessage != ''}"
+          style="color: red; font-size: 20px; font-weight: 600; padding: 20px; margin: 20px 0; position: relative; display: block; width: 100%;">
+          <p style="position: relative; color: red; font-size: 20px; font-weight: 600;" th:text="${notRequestClubMessage}"></p>
         </div>
-        <div class="container-in-a" th:if="${notRequestClubMessage == null}">
+        <div class="container-in-a" th:if="${notRequestClubMessage == null or notRequestClubMessage == ''}">
           <div class="wrapper">
             <div class="div-2">
               <div class="title-action-buttons">
