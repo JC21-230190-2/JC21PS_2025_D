@@ -47,7 +47,6 @@ public class ParticipantListController {
         SessionDto sessionDto = commonService.getSessionDto(session);
         String userId = sessionDto.getUserId();
         String clubId = sessionDto.getClubId();
-        String leaderClubId = sessionDto.getClubId();
 
         if (userId.isEmpty()) {
             mav.setViewName("error");
@@ -58,6 +57,7 @@ public class ParticipantListController {
         ParticipantListDto dto = new ParticipantListDto();
         dto.setUserId(userId);
         dto.setActivityId(activityId);
+<<<<<<< HEAD
         dto.setClubId(clubId);
         dto.setLeaderClubId(leaderClubId);
 
@@ -65,10 +65,17 @@ public class ParticipantListController {
 
             // サービス呼び出し
             List<ParticipantDto> participantDtoList = participantListService.getParticipantListData(dto);
+=======
+
+        try {
+            // ➌TODO participantListServiceのgetParticipantListDataメソッドを呼び出す。
+            ParticipantDto returnDto = participantListService.getParticipantListData(dto);
+>>>>>>> 2e24277ed4210b651bb55b2a8fe07bba1e5fec6f
 
             // 返却用フォームリスト
             List<ParticipantListForm> responseListForm = new ArrayList<>();
 
+<<<<<<< HEAD
             // ParticipantDto → List<ParticipantListDto> を展開
             for (ParticipantDto participantDto : participantDtoList) {
 
@@ -85,17 +92,33 @@ public class ParticipantListController {
 
                         responseListForm.add(form);
                     }
+=======
+            /*
+             * ➍ TODO responseListFormに値をセット
+             */
+
+                for (ParticipantListDto participantListDto : returnDto.getPariticipantListDto()) {
+                    ParticipantListForm form = new ParticipantListForm();
+                    form.setActivityId(participantListDto.getActivityId());
+                    form.setUserId(participantListDto.getUserId());
+                    form.setActivityName(participantListDto.getActivityName());
+                    form.setUserName(participantListDto.getUserName());
+                    responseListForm.add(form);
+>>>>>>> 2e24277ed4210b651bb55b2a8fe07bba1e5fec6f
                 }
             }
 
             // 画面に渡す
             mav.addObject("participantList", responseListForm);
             mav.addObject("activityId", activityId);
-            mav.addObject("leaderClubId", leaderClubId);
 
             // メッセージ
             String resultMessage = messageSource.getMessage("notpariticipant", null, Locale.getDefault());
             mav.addObject("message", resultMessage);
+<<<<<<< HEAD
+=======
+            mav.addObject("leaderClubId", clubId);
+>>>>>>> 2e24277ed4210b651bb55b2a8fe07bba1e5fec6f
 
             mav.setViewName("participantList");
 

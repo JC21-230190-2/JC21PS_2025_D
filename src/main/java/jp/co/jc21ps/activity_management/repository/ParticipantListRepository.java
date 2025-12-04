@@ -20,6 +20,32 @@ public class ParticipantListRepository {
 
     // 初期画面表示
     public List<ParticipantListEntity> getParticipantListData(ParticipantListEntity paramEntity) {
+<<<<<<< HEAD
+=======
+        /*
+         * TODO ➊ 初期表示情報を取得するSQLを完成させる。
+         */
+        String sql = 
+                """
+                SELECT 
+                    a.activity_id, 
+                    a.user_id,
+                    b.activity_name,
+                    c.login_name AS user_name
+                FROM 
+                    trn_participant a
+                LEFT JOIN 
+                    trn_activity b
+                ON
+                    a.activity_id = b.activity_id
+                LEFT JOIN 
+                    mst_user c 
+                ON
+                    a.user_id = c.user_id
+                WHERE
+                    a.activity_id = ?
+                """;
+>>>>>>> 2e24277ed4210b651bb55b2a8fe07bba1e5fec6f
 
         String sql =
                 "SELECT a.activity_id, a.user_id, b.activity_name, c.user_name " +
@@ -51,11 +77,25 @@ public class ParticipantListRepository {
 
     // 活動名を表示
     public String getActivityName(ParticipantListEntity paramEntity) {
+<<<<<<< HEAD
 
         String sql =
                 "SELECT activity_name " +
                 "FROM activity_table " +
                 "WHERE activity_id = ?";
+=======
+        /*
+         * TODO ➋ 活動名を取得するSQLを完成させる。
+         */
+        String sql = """
+                SELECT
+                    activity_name
+                FROM
+                    trn_activity
+                WHERE
+                    activity_id = ?
+                """;
+>>>>>>> 2e24277ed4210b651bb55b2a8fe07bba1e5fec6f
 
         List<Map<String, Object>> actNameList =
                 jdbcTemplate.queryForList(sql, paramEntity.getActivityId());

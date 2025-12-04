@@ -80,21 +80,36 @@ public class RegisterActivityController {
         /*
          * TODO ➊ セッションからuserIdを取得する
          */
+<<<<<<< HEAD
  
+=======
+        SessionDto sessionDto = commonService.getSessionDto(session);
+        String leaderClubId = sessionDto.getClubId();
+
+
+>>>>>>> 2e24277ed4210b651bb55b2a8fe07bba1e5fec6f
         // バリデーションエラー
         if (bindingResult.hasErrors()) {
             mav.addObject("registerActivitySaveForm", paramForm);
-//             mav.addObject("leaderClubId", leaderClubId);
+            mav.addObject("leaderClubId", leaderClubId);
             mav.setViewName("registerActivity");
             return mav;
         }
  
         // セッションが切れた場合、エラー画面に遷移
+<<<<<<< HEAD
 //         if (leaderClubId.isEmpty()) {
 //             mav.setViewName("error");
 //             return mav;
 //         }
  
+=======
+        if (leaderClubId.isEmpty()) {
+            mav.setViewName("error");
+            return mav;
+        }
+
+>>>>>>> 2e24277ed4210b651bb55b2a8fe07bba1e5fec6f
         try {
             // インスタンス化
             RegisterActivitySaveDto activitySaveDto = new RegisterActivitySaveDto();
@@ -102,7 +117,21 @@ public class RegisterActivityController {
             /*
              * TODO ➋ activitySaveDtoに、パラメータをsetする。
              */
+<<<<<<< HEAD
  
+=======
+            activitySaveDto.setActivityDate(paramForm.getActivityDate());
+            activitySaveDto.setActivityId(paramForm.getActivityId());
+            activitySaveDto.setClubId(leaderClubId);
+            activitySaveDto.setActivityName(paramForm.getActivityName());
+            activitySaveDto.setActivityPlace(paramForm.getActivityPlace());
+            activitySaveDto.setActivityStartTime(paramForm.getActivityStartTime());
+            activitySaveDto.setActivityEndTime(paramForm.getActivityEndTime());
+            activitySaveDto.setActivityDescription(paramForm.getActivityDescription());
+            activitySaveDto.setMaxParticipant(paramForm.getMaxParticipant());
+
+            System.out.println(activitySaveDto);
+>>>>>>> 2e24277ed4210b651bb55b2a8fe07bba1e5fec6f
             // サービスからinsertメソッドを呼び出す
             String resultMessageKey = registerActivityService.insertActivity(activitySaveDto);
  
@@ -111,6 +140,7 @@ public class RegisterActivityController {
                     Locale.getDefault());
  
             // 活動登録に成功した場合、トップ画面に遷移
+<<<<<<< HEAD
 //             if ("activityRegisterCompleteMessage".equals(resultMessageKey)) {
 //                 redirectAttributes.addFlashAttribute("activityRegisterCompleteMessage", resultMessage);
 //                 mav.addObject("leaderClubId", leaderClubId);
@@ -122,8 +152,23 @@ public class RegisterActivityController {
 //                 mav.setViewName("error");
 //             }
  
+=======
+            if ("activityRegisterCompleteMessage".equals(resultMessageKey)) {
+                redirectAttributes.addFlashAttribute("activityRegisterCompleteMessage", resultMessage);
+                mav.addObject("leaderClubId", leaderClubId);
+                mav.setViewName("redirect:/top");
+                return mav;
+
+            } else {
+                // 活動登録に失敗した場合、エラー画面に遷移
+                System.out.println("失敗");
+                mav.setViewName("error");
+            }
+
+>>>>>>> 2e24277ed4210b651bb55b2a8fe07bba1e5fec6f
         } catch (Exception e) {
             // DB接続に失敗した場合、エラー画面に遷移
+            e.printStackTrace();
             mav.setViewName("error");
         }
         return mav;
